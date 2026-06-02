@@ -1,0 +1,453 @@
+/* ────────────────────────────────────────────
+   Catálogo de piezas
+   Grid de tarjetas · Modal de edición · FAB
+   Búsqueda / filtro · Estados vacíos
+   ──────────────────────────────────────────── */
+
+/* ════════════════════════════════════════════
+   Barra de búsqueda y filtros
+   ════════════════════════════════════════════ */
+
+.catalog-search {
+  position: relative;
+  margin-bottom: var(--space-5);
+}
+
+.catalog-search__input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  padding-left: var(--space-10);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  min-height: 44px;
+  transition: border-color var(--transition-fast),
+              box-shadow var(--transition-fast);
+}
+
+.catalog-search__input:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(198, 123, 92, 0.15);
+  outline: none;
+}
+
+.catalog-search__input::placeholder {
+  color: var(--text-muted);
+}
+
+.catalog-search__icon {
+  position: absolute;
+  left: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--text-base);
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.catalog-search__count {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-top: var(--space-2);
+}
+
+/* ════════════════════════════════════════════
+   Grid de tarjetas
+   ════════════════════════════════════════════ */
+
+.catalog-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-3);
+}
+
+@media (min-width: 500px) {
+  .catalog-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .catalog-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+  }
+}
+
+/* ════════════════════════════════════════════
+   Tarjeta individual de pieza
+   ════════════════════════════════════════════ */
+
+.catalog-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: box-shadow var(--transition-fast),
+              transform var(--transition-fast),
+              border-color var(--transition-fast);
+}
+
+.catalog-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+  border-color: var(--color-terracota-light);
+}
+
+.catalog-card__body {
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1;
+}
+
+.catalog-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.catalog-card__name {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  line-height: var(--line-height-tight);
+  flex: 1;
+}
+
+.catalog-card__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  flex-wrap: wrap;
+}
+
+.catalog-card__stat {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.catalog-card__stat-icon {
+  font-size: var(--text-xs);
+  opacity: 0.6;
+}
+
+/* Acciones (editar / eliminar) */
+.catalog-card__actions {
+  display: flex;
+  gap: var(--space-1);
+  padding: 0 var(--space-4) var(--space-3);
+}
+
+.catalog-card__action {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: background var(--transition-fast),
+              color var(--transition-fast);
+  min-height: 28px;
+}
+
+.catalog-card__action--edit {
+  color: var(--text-secondary);
+  background: var(--bg-surface-alt);
+}
+
+.catalog-card__action--edit:hover {
+  background: var(--border-color);
+  color: var(--text-primary);
+}
+
+.catalog-card__action--delete {
+  color: var(--color-error);
+  background: rgba(198, 87, 74, 0.08);
+}
+
+.catalog-card__action--delete:hover {
+  background: rgba(198, 87, 74, 0.15);
+}
+
+/* ════════════════════════════════════════════
+   Botón flotante (FAB) — Agregar pieza
+   ════════════════════════════════════════════ */
+
+.catalog-fab {
+  position: fixed;
+  bottom: calc(var(--footer-height) + var(--space-4));
+  right: var(--space-4);
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--color-terracota);
+  color: var(--color-blanco);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-2xl);
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+  z-index: var(--z-dropdown);
+  transition: background var(--transition-fast),
+              transform var(--transition-fast),
+              box-shadow var(--transition-fast);
+}
+
+.catalog-fab:hover {
+  background: var(--color-terracota-dark);
+  box-shadow: var(--shadow-xl);
+  transform: scale(1.06);
+}
+
+.catalog-fab:active {
+  transform: scale(0.94);
+}
+
+@media (min-width: 768px) {
+  .catalog-fab {
+    right: var(--space-8);
+    bottom: var(--space-8);
+    width: 56px;
+    height: 56px;
+  }
+}
+
+/* ════════════════════════════════════════════
+   Modal de edición / creación
+   ════════════════════════════════════════════ */
+
+.catalog-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 21, 18, 0.5);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: var(--z-modal);
+  animation: fadeIn var(--transition-fast) ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.catalog-modal {
+  background: var(--bg-surface);
+  border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  width: 100%;
+  max-width: var(--content-max-width);
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-xl);
+  animation: slideUp var(--transition-base) ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.catalog-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-5) var(--space-5) var(--space-3);
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  background: var(--bg-surface);
+  z-index: 1;
+}
+
+.catalog-modal__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.catalog-modal__close {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-lg);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background var(--transition-fast),
+              color var(--transition-fast);
+}
+
+.catalog-modal__close:hover {
+  background: var(--bg-surface-alt);
+  color: var(--text-primary);
+}
+
+.catalog-modal__body {
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.catalog-modal__footer {
+  display: flex;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5) var(--space-6);
+  position: sticky;
+  bottom: 0;
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border-color);
+}
+
+/* Select de tamaño dentro del modal */
+.size-select {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+}
+
+.size-select__option {
+  position: relative;
+}
+
+.size-select__option input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.size-select__option label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: var(--space-3) var(--space-2);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  text-align: center;
+  transition: border-color var(--transition-fast),
+              background var(--transition-fast),
+              color var(--transition-fast);
+}
+
+.size-select__option label:hover {
+  border-color: var(--color-terracota-light);
+}
+
+.size-select__option input:checked + label {
+  border-color: var(--color-terracota);
+  background: rgba(198, 123, 92, 0.06);
+  color: var(--color-terracota-dark);
+  font-weight: var(--font-weight-semibold);
+}
+
+.size-select__hint {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  font-weight: var(--font-weight-normal);
+}
+
+/* ════════════════════════════════════════════
+   Estado vacío del catálogo
+   ════════════════════════════════════════════ */
+
+.catalog-empty {
+  text-align: center;
+  padding: var(--space-10) var(--space-4);
+}
+
+.catalog-empty__icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-3);
+  opacity: 0.3;
+}
+
+.catalog-empty__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.catalog-empty__text {
+  font-size: var(--text-sm);
+  color: var(--text-muted);
+  margin-bottom: var(--space-5);
+}
+
+/* ════════════════════════════════════════════
+   Confirmación de eliminación
+   ════════════════════════════════════════════ */
+
+.catalog-confirm {
+  text-align: center;
+  padding: var(--space-6) var(--space-4);
+}
+
+.catalog-confirm__icon {
+  font-size: 2.5rem;
+  margin-bottom: var(--space-4);
+}
+
+.catalog-confirm__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  color: var(--text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.catalog-confirm__text {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-6);
+}
+
+.catalog-confirm__actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+}
+
+/* ════════════════════════════════════════════
+   Dark mode overrides específicos
+   ════════════════════════════════════════════ */
+
+[data-theme="dark"] .catalog-modal-overlay {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="dark"] .catalog-card__action--delete {
+  background: rgba(217, 112, 102, 0.12);
+}
+
+[data-theme="dark"] .catalog-card__action--delete:hover {
+  background: rgba(217, 112, 102, 0.22);
+}
