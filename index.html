@@ -23,12 +23,28 @@
 </head>
 <body>
   <header class="app-header">
-    <!-- Navigation / title -->
+    <div class="header-brand">
+      <div class="header-logo">Y</div>
+      <div>
+        <div class="header-title">Yeso Artesanal</div>
+        <div class="header-subtitle">Cotizador</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <label class="theme-toggle" title="Modo oscuro">
+        <input type="checkbox" id="theme-switch">
+        <span class="theme-toggle__track">
+          <span class="theme-toggle__icon theme-toggle__icon--sun">☀</span>
+          <span class="theme-toggle__icon theme-toggle__icon--moon">☾</span>
+        </span>
+      </label>
+      <button class="header-btn" id="btn-settings" title="Configuración">⚙</button>
+    </div>
   </header>
 
   <main class="app-main">
-    <section id="calculator" class="panel">
-      <!-- Calculator form -->
+    <section id="calculator" class="panel" data-active>
+      <!-- Calculator form — llenado por calculator-ui.js -->
     </section>
 
     <section id="catalog" class="panel">
@@ -57,7 +73,28 @@
   </main>
 
   <footer class="app-footer">
-    <!-- Footer info -->
+    <nav class="nav-tabs">
+      <button class="nav-tab nav-tab--active" data-panel="calculator">
+        <span class="nav-tab__icon">🧮</span>
+        <span class="nav-tab__label">Calcular</span>
+      </button>
+      <button class="nav-tab" data-panel="catalog">
+        <span class="nav-tab__icon">📦</span>
+        <span class="nav-tab__label">Catálogo</span>
+      </button>
+      <button class="nav-tab" data-panel="combos">
+        <span class="nav-tab__icon">💐</span>
+        <span class="nav-tab__label">Combos</span>
+      </button>
+      <button class="nav-tab" data-panel="candles">
+        <span class="nav-tab__icon">🕯</span>
+        <span class="nav-tab__label">Velas</span>
+      </button>
+      <button class="nav-tab" data-panel="history">
+        <span class="nav-tab__icon">📋</span>
+        <span class="nav-tab__label">Historial</span>
+      </button>
+    </nav>
   </footer>
 
   <!-- Scripts (ES modules) -->

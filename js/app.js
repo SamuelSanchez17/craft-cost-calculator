@@ -8,6 +8,9 @@ import { createStore } from './state.js';
 import { CATALOGO_PIEZAS, CATALOGO_CERAS, DEFAULT_SETTINGS } from './catalog.js';
 import { calcularPiezaCompleta } from './calculator.js';
 import * as storage from './storage.js';
+import { mountCalculator } from './ui/calculator-ui.js';
+import { mountCatalog } from './ui/catalog-ui.js';
+import { showPanel } from './ui/renderer.js';
 
 // ─── Datos iniciales: merge de defaults + localStorage ───
 
@@ -119,67 +122,120 @@ store.dispatch = function (action, payload) {
   return rawDispatch(action, payload);
 };
 
-// ─── Restaurar dark mode al iniciar ───
+// ─── Restaurar dark mode y tema al iniciar ───
 
 if (initialState.darkMode) {
   document.documentElement.setAttribute('data-theme', 'dark');
+}
+
+// ─── Montar UI ───
+
+const mountedCleanups = new Map();
+
+function mountPanel(panelId) {
+  if (mountedCleanups.has(panelId)) return;
+
+  switch (panelId) {
+    case 'calculator': {
+      const cleanup = mountCalculator();
+      mountedCleanups.set('calculator', cleanup);
+      break;
+    }
+    case 'catalog': {
+      const cleanup = mountCatalog();
+      mountedCleanups.set('catalog', cleanup);
+      break;
+    }
+    // Futuros paneles se montarán aquí
+  }
+}
+
+function navigateTo(panelId) {
+  showPanel(panelId);
+  mountPanel(panelId);
+
+  document.querySelectorAll('.nav-tab').forEach((tab) => {
+    const active = tab.dataset.panel === panelId;
+    tab.classList.toggle('nav-tab--active', active);
+  });
+
+  store.setState({ activePanel: panelId });
+}
+
+// ─── Eventos de navegación ───
+
+document.querySelectorAll('.nav-tab').forEach((tab) => {
+  tab.addEventListener('click', () => {
+    navigateTo(tab.dataset.panel);
+  });
+});
+
+// ─── Dark mode toggle ───
+
+const themeSwitch = document.getElementById('theme-switch');
+if (themeSwitch) {
+  themeSwitch.checked = initialState.darkMode;
+
+  themeSwitch.addEventListener('change', () => {
+    store.dispatch('toggleDarkMode');
+  });
+}
+
+// ─── Botón settings ───
+
+const settingsBtn = document.getElementById('btn-settings');
+if (settingsBtn) {
+  settingsBtn.addEventListener('click', () => {
+    navigateTo('settings');
+  });
+}
+
+// ─── Iniciar con panel activo ───
+
+const startPanel = initialState.activePanel;
+mountPanel(startPanel);
+
+// Si el panel activo es uno que no tiene UI aún (settings, combos, etc.)
+// mostrar un estado placeholder para que no se vea vacío
+if (!mountedCleanups.has(startPanel)) {
+  const panel = document.getElementById(startPanel);
+  if (panel && startPanel !== 'calculator' && startPanel !== 'catalog') {
+    panel.innerHTML = `
+      <h2 class="section-title">En desarrollo</h2>
+      <p class="section-subtitle">Esta sección estará disponible próximamente.</p>
+    `;
+  }
 }
 
 // ─── Marcar como listo ───
 
 store.setState({ ready: true });
 
-// ─── Verificación — Fase 1.8 ───
+// ─── Verificación — motor de cálculo ───
 
-console.log('%c App lista — Craft Cost Calculator', 'color: #7D9B76; font-weight: bold;');
-console.log('%cStore inicializado con %d piezas, %d figuras de cera, %d items en historial.',
+console.log('%c✅ App lista — Craft Cost Calculator', 'color: #7D9B76; font-weight: bold;');
+console.log('%cPiezas: %d | Figuras cera: %d | Historial: %d',
   'color: #6B5A50;',
   store.getState().catalog.length,
   store.getState().catalogCeras.length,
   store.getState().history.length,
 );
 
-// Verifica que la fórmula maestra funciona con el ejemplo del doc (sección 16)
 const testCorazon = calcularPiezaCompleta({
-  peso_g: 152,
-  tamano: 'chica',
-  precioYesoPorG: 0.025,      // Redimix
-  minutos: 15,
-  tarifaPorMinuto: 1.16,       // Pueblo
-  conColor: true,
-  conDetalleFino: false,
-  conSellador: false,
-  ajusteDesmolde: 0,
-  ajusteEsfuerzo: 0,
-  margen: 0.45,                // Bazar
-  recargoUrgencia: 0,
+  peso_g: 152, tamano: 'chica', precioYesoPorG: 0.025, minutos: 15,
+  tarifaPorMinuto: 1.16, conColor: true, conDetalleFino: false,
+  conSellador: false, ajusteDesmolde: 0, ajusteEsfuerzo: 0,
+  margen: 0.45, recargoUrgencia: 0,
 });
 
-console.log('%c── Verificación Corazón Trenzado ──', 'color: #C9A96E;');
-console.log('Costo Yeso:        ', testCorazon.desglose.costoYeso,       '(esperado $3.80)');
-console.log('Costos Fijos:      ', testCorazon.desglose.costosFijos,     '(esperado $5.00)');
-console.log('Mano de Obra:      ', testCorazon.desglose.manoDeObra,      '(esperado $17.40)');
-console.log('Costo Color:       ', testCorazon.desglose.costoColor,       '(esperado $5.00)');
-console.log('───');
-console.log('Costo Base:        ', testCorazon.costoBase,                 '(esperado $31.20)');
-console.log('Costo Ajustado:    ', testCorazon.costoAjustado,             '(esperado $31.20)');
-console.log('Precio Mínimo:     ', testCorazon.precioMinimo,              '(esperado $56.73)');
-console.log('Precio Final:      ', testCorazon.precioFinal,               '(esperado $60.00)');
-console.log('Ganancia MXN:      ', testCorazon.gananciaMXN,               '(esperado $28.80)');
-console.log('Ganancia %:        ', testCorazon.gananciaPct + '%',         '(esperado 48%)');
-
-// Verificar contra precio de referencia (sección 12) — Corazón trenzado bazar
-const expected = testCorazon.precioFinal === 60
+const ok = testCorazon.precioFinal === 60
   && testCorazon.costoBase === 31.20
   && testCorazon.desglose.costoYeso === 3.80;
 
-if (expected) {
-  console.log('%c Verificación exitosa — todos los valores coinciden con el documento.',
-    'color: #5D8A5B; font-weight: bold;');
+if (ok) {
+  console.log('%c✅ Motor de cálculo verificado — Corazón trenzado = $60', 'color: #5D8A5B;');
 } else {
-  console.warn('Algunos valores difieren del documento. Revisar parámetros.');
+  console.log('%c⚠️ Motor de cálculo difiere del documento', 'color: #D4A34A;');
 }
-
-// ─── Exponer store globalmente ───
 
 export { store };

@@ -1,0 +1,84 @@
+/* ────────────────────────────────────────────
+   Footer — Barra de navegación inferior
+   5 tabs: Calcular · Catálogo · Combos · Velas · Historial
+   Fixed bottom, safe-area aware, active state
+   ──────────────────────────────────────────── */
+
+/* ════════════════════════════════════════════
+   Nav tabs
+   ════════════════════════════════════════════ */
+
+.nav-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.nav-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: var(--space-1) var(--space-2);
+  min-width: 48px;
+  color: rgba(245, 240, 235, 0.55);
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: color var(--transition-fast),
+              background var(--transition-fast);
+  position: relative;
+}
+
+.nav-tab:hover {
+  color: rgba(245, 240, 235, 0.8);
+}
+
+.nav-tab:active {
+  transform: scale(0.94);
+}
+
+.nav-tab--active {
+  color: var(--color-blanco);
+}
+
+/* Indicador activo: línea superior sutil */
+.nav-tab--active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 3px;
+  border-radius: 0 0 var(--radius-full) var(--radius-full);
+  background: var(--color-dorado);
+}
+
+.nav-tab__icon {
+  font-size: var(--text-xl);
+  line-height: 1;
+}
+
+.nav-tab__label {
+  font-size: 10px;
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  line-height: 1;
+}
+
+/* ════════════════════════════════════════════
+   Ajustes de safe area (iOS notch)
+   ════════════════════════════════════════════ */
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .app-footer {
+    padding-bottom: env(safe-area-inset-bottom);
+    height: calc(var(--footer-height) + env(safe-area-inset-bottom));
+  }
+}
