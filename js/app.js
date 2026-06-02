@@ -159,6 +159,7 @@ function navigateTo(panelId) {
     tab.classList.toggle('nav-tab--active', active);
   });
 
+  window.scrollTo({ top: 0, behavior: 'smooth' });
   store.setState({ activePanel: panelId });
 }
 

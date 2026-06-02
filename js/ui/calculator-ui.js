@@ -154,7 +154,7 @@ function renderPlasterCards() {
       htmlFor: `yeso-${y.id}`,
     },
       el('span', { className: 'radio-card__name' }, y.nombre),
-      el('span', { className: 'radio-card__price' }, `${formatMXNShort(y.precioPorGramo)}/g`),
+      el('span', { className: 'radio-card__price' }, `$${y.precioPorGramo.toFixed(3)}/g`),
     );
 
     return el('div', { className: 'radio-card' }, input, content);
@@ -167,7 +167,7 @@ function renderSelectGroup() {
   // Zona
   const zonaOptions = Object.values(store.getState().settings.tarifasZona).map((tarifa, i) => {
     const keys = ['pueblo', 'ciudad'];
-    const names = ['Pueblo (incl. Tapachula)', 'Ciudad'];
+    const names = ['Pueblo', 'Ciudad'];
     return el('option', { value: keys[i] }, `${names[i]} — ${formatMXNShort(tarifa)}/min`);
   });
 

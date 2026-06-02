@@ -223,7 +223,7 @@
 @media (min-width: 768px) {
   .catalog-fab {
     right: var(--space-8);
-    bottom: var(--space-8);
+    bottom: calc(var(--footer-height) + var(--space-6));
     width: 56px;
     height: 56px;
   }

@@ -26,9 +26,10 @@ export function el(tag, attrs, ...children) {
         element.innerHTML = value;
       } else if (key.startsWith('data-')) {
         element.setAttribute(key, value);
+      } else if (key === 'htmlFor') {
+        element.setAttribute('for', value);
       } else if (key.startsWith('aria-')) {
-        const ariaKey = key.replace('aria-', 'aria-');
-        element.setAttribute(ariaKey, value);
+        element.setAttribute(key, value);
       } else if (key === 'style' && typeof value === 'object') {
         Object.assign(element.style, value);
       } else if (key.startsWith('on') && typeof value === 'function') {
