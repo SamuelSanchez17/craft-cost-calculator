@@ -10,6 +10,8 @@ import { calcularPiezaCompleta } from './calculator.js';
 import * as storage from './storage.js';
 import { mountCalculator } from './ui/calculator-ui.js';
 import { mountCatalog } from './ui/catalog-ui.js';
+import { mountCandles } from './ui/candles-ui.js';
+import { mountSettings } from './ui/settings-ui.js';
 import { showPanel } from './ui/renderer.js';
 
 // ─── Datos iniciales: merge de defaults + localStorage ───
@@ -51,6 +53,7 @@ const store = createStore(initialState, {
       activePanel: state.activePanel,
       darkMode: state.darkMode,
     });
+    storage.saveSettings(state.settings);
   },
 });
 
@@ -146,6 +149,16 @@ function mountPanel(panelId) {
       mountedCleanups.set('catalog', cleanup);
       break;
     }
+    case 'candles': {
+      const cleanup = mountCandles();
+      mountedCleanups.set('candles', cleanup);
+      break;
+    }
+    case 'settings': {
+      const cleanup = mountSettings();
+      mountedCleanups.set('settings', cleanup);
+      break;
+    }
     // Futuros paneles se montarán aquí
   }
 }
@@ -154,10 +167,16 @@ function navigateTo(panelId) {
   showPanel(panelId);
   mountPanel(panelId);
 
+  const tabExists = document.querySelector(`.nav-tab[data-panel="${panelId}"]`);
   document.querySelectorAll('.nav-tab').forEach((tab) => {
     const active = tab.dataset.panel === panelId;
     tab.classList.toggle('nav-tab--active', active);
   });
+
+  // Si no hay tab para este panel (ej. settings), quitar activo de todos
+  if (!tabExists) {
+    document.querySelectorAll('.nav-tab').forEach((t) => t.classList.remove('nav-tab--active'));
+  }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
   store.setState({ activePanel: panelId });
@@ -198,15 +217,15 @@ mountPanel(startPanel);
 
 // Si el panel activo es uno que no tiene UI aún (settings, combos, etc.)
 // mostrar un estado placeholder para que no se vea vacío
-if (!mountedCleanups.has(startPanel)) {
-  const panel = document.getElementById(startPanel);
-  if (panel && startPanel !== 'calculator' && startPanel !== 'catalog') {
-    panel.innerHTML = `
-      <h2 class="section-title">En desarrollo</h2>
-      <p class="section-subtitle">Esta sección estará disponible próximamente.</p>
-    `;
+  if (!mountedCleanups.has(startPanel)) {
+    const panel = document.getElementById(startPanel);
+    if (panel && !['calculator', 'catalog', 'candles', 'settings'].includes(startPanel)) {
+      panel.innerHTML = `
+        <h2 class="section-title">En desarrollo</h2>
+        <p class="section-subtitle">Esta sección estará disponible próximamente.</p>
+      `;
+    }
   }
-}
 
 // ─── Marcar como listo ───
 
@@ -214,7 +233,7 @@ store.setState({ ready: true });
 
 // ─── Verificación — motor de cálculo ───
 
-console.log('%c✅ App lista — Craft Cost Calculator', 'color: #7D9B76; font-weight: bold;');
+console.log('%cApp lista — Craft Cost Calculator', 'color: #7D9B76; font-weight: bold;');
 console.log('%cPiezas: %d | Figuras cera: %d | Historial: %d',
   'color: #6B5A50;',
   store.getState().catalog.length,
@@ -234,9 +253,9 @@ const ok = testCorazon.precioFinal === 60
   && testCorazon.desglose.costoYeso === 3.80;
 
 if (ok) {
-  console.log('%c✅ Motor de cálculo verificado — Corazón trenzado = $60', 'color: #5D8A5B;');
+  console.log('%cMotor de cálculo verificado — Corazón trenzado = $60', 'color: #5D8A5B;');
 } else {
-  console.log('%c⚠️ Motor de cálculo difiere del documento', 'color: #D4A34A;');
+  console.log('%cMotor de cálculo difiere del documento', 'color: #D4A34A;');
 }
 
 export { store };

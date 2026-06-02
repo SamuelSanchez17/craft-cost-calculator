@@ -60,9 +60,16 @@
   border-radius: var(--radius-md);
   color: var(--text-secondary);
   font-size: var(--text-lg);
+  background: transparent;
+  border: none;
   transition: background var(--transition-fast),
               color var(--transition-fast);
   cursor: pointer;
+}
+
+.header-btn svg {
+  width: 20px;
+  height: 20px;
 }
 
 .header-btn:hover {
@@ -107,13 +114,17 @@
   top: 3px;
   width: 16px;
   height: 16px;
-  font-size: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: transform var(--transition-base),
               opacity var(--transition-base);
   line-height: 1;
+}
+
+.theme-toggle__icon svg {
+  width: 14px;
+  height: 14px;
 }
 
 .theme-toggle__icon--sun {

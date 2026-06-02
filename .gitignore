@@ -1,6 +1,7 @@
-# Ignorar la carpeta interna y caché de OpenCode
 .opencode/
 
 AGENTS.md
 calculadora_precios.md
 guide.md
+
+skills-lock.json
