@@ -9,6 +9,17 @@ import { COSTOS_COLOR, COSTOS_SELLADOR, COSTOS_DETALLE_FINO } from '../catalog.j
 import { formatGramos, formatMinutos, capitalize } from '../utils/format.js';
 import { saveCatalog } from '../storage.js';
 import { el, clear, qs, on, delegate } from './renderer.js';
+import {
+  iconSearch,
+  iconBox,
+  iconWeight,
+  iconClock,
+  iconEdit,
+  iconTrash,
+  iconWarning,
+  iconPlus,
+  iconClose,
+} from './icons.js';
 
 let container = null;
 let searchQuery = '';
@@ -45,7 +56,8 @@ function renderSearchBar() {
     value: searchQuery,
   });
 
-  const icon = el('span', { className: 'catalog-search__icon' }, '🔍');
+  const icon = el('span', { className: 'catalog-search__icon' });
+  icon.appendChild(iconSearch({ size: 16 }));
 
   const count = el('span', { className: 'catalog-search__count', id: 'catalog-count' });
 
@@ -74,12 +86,12 @@ function renderGrid() {
     grid.appendChild(
       searchQuery
         ? el('div', { className: 'catalog-empty' },
-            el('div', { className: 'catalog-empty__icon' }, '🔍'),
+            el('div', { className: 'catalog-empty__icon' }, iconSearch({ size: 40, stroke: 1.5 })),
             el('div', { className: 'catalog-empty__title' }, 'Sin resultados'),
             el('p', { className: 'catalog-empty__text' }, `Ninguna pieza coincide con "${searchQuery}".`),
           )
         : el('div', { className: 'catalog-empty' },
-            el('div', { className: 'catalog-empty__icon' }, '📦'),
+            el('div', { className: 'catalog-empty__icon' }, iconBox({ size: 40, stroke: 1.5 })),
             el('div', { className: 'catalog-empty__title' }, 'Catálogo vacío'),
             el('p', { className: 'catalog-empty__text' }, 'Agrega tu primera pieza con el botón +.'),
           )
@@ -99,11 +111,11 @@ function renderGrid() {
         ),
         el('div', { className: 'catalog-card__meta' },
           el('span', { className: 'catalog-card__stat' },
-            el('span', { className: 'catalog-card__stat-icon' }, '⚖'),
+            iconWeight({ size: 14 }),
             formatGramos(piece.peso),
           ),
           el('span', { className: 'catalog-card__stat' },
-            el('span', { className: 'catalog-card__stat-icon' }, '⏱'),
+            iconClock({ size: 14 }),
             formatMinutos(piece.minutos),
           ),
         ),
@@ -112,11 +124,11 @@ function renderGrid() {
         el('button', {
           className: 'catalog-card__action catalog-card__action--edit',
           'data-id': piece.id,
-        }, '✏️ Editar'),
+        }, iconEdit({ size: 14 }), ' Editar'),
         el('button', {
           className: 'catalog-card__action catalog-card__action--delete',
           'data-id': piece.id,
-        }, '🗑 Eliminar'),
+        }, iconTrash({ size: 14 }), ' Eliminar'),
       ),
     );
 
@@ -136,7 +148,7 @@ function openModal(piece = null) {
     isEditing ? 'Editar pieza' : 'Nueva pieza'
   );
 
-  const closeBtn = el('button', { className: 'catalog-modal__close' }, '✕');
+  const closeBtn = el('button', { className: 'catalog-modal__close' }, iconClose({ size: 16 }));
 
   // Campos
   const nameInput = el('input', {
@@ -295,7 +307,7 @@ function openDeleteConfirm(piece) {
   if (existingOverlay) existingOverlay.remove();
 
   const content = el('div', { className: 'catalog-confirm' },
-    el('div', { className: 'catalog-confirm__icon' }, '⚠️'),
+    el('div', { className: 'catalog-confirm__icon', style: { color: 'var(--color-warning)' } }, iconWarning({ size: 40 })),
     el('h3', { className: 'catalog-confirm__title' }, '¿Eliminar pieza?'),
     el('p', { className: 'catalog-confirm__text' },
       `"${piece.nombre}" será eliminada permanentemente del catálogo. Esta acción no se puede deshacer.`

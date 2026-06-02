@@ -25,6 +25,17 @@ import {
 import { formatMXN, formatMXNShort, formatPercent, formatGramos, formatMinutos, capitalize } from '../utils/format.js';
 import { addToHistory } from '../storage.js';
 import { el, clear, qs, on, delegate } from './renderer.js';
+import {
+  iconClipboard,
+  iconSave,
+  iconShare,
+  iconCheck,
+  iconWarning,
+  iconSearch,
+  iconWeight,
+  iconClock,
+  iconChevronDown,
+} from './icons.js';
 
 // ─── Referencias internas ───
 
@@ -43,7 +54,8 @@ function renderPieceSelector() {
     autocomplete: 'off',
   });
 
-  const caret = el('span', { className: 'piece-selector__caret' }, '▼');
+  const caret = el('span', { className: 'piece-selector__caret' });
+  caret.appendChild(iconChevronDown({ size: 14, stroke: 2 }));
 
   const dropdown = el('div', { className: 'piece-selector__dropdown' });
 
@@ -127,10 +139,10 @@ function renderPieceDetails() {
     el('div', { className: 'flex items-center gap-2', style: { flexWrap: 'wrap' } },
       el('span', { className: `badge badge--${selectedPiece.tamano}` }, capitalize(selectedPiece.tamano)),
       el('span', { className: 'text-sm text-secondary', style: { display: 'flex', alignItems: 'center', gap: '4px' } },
-        '⚖', formatGramos(selectedPiece.peso),
+        iconWeight({ size: 14 }), formatGramos(selectedPiece.peso),
       ),
       el('span', { className: 'text-sm text-secondary', style: { display: 'flex', alignItems: 'center', gap: '4px' } },
-        '⏱', formatMinutos(selectedPiece.minutos),
+        iconClock({ size: 14 }), formatMinutos(selectedPiece.minutos),
       ),
     )
   );
@@ -167,8 +179,8 @@ function renderSelectGroup() {
   // Zona
   const zonaOptions = Object.values(store.getState().settings.tarifasZona).map((tarifa, i) => {
     const keys = ['pueblo', 'ciudad'];
-    const names = ['Pueblo', 'Ciudad'];
-    return el('option', { value: keys[i] }, `${names[i]} — ${formatMXNShort(tarifa)}/min`);
+    const names = ['Pueblo (incl. Tapachula)', 'Ciudad'];
+    return el('option', { value: keys[i] }, `${names[i]} — $${tarifa.toFixed(2)}/min`);
   });
 
   const zonaSelect = el('select', { className: 'form-select', id: 'calc-zona' }, ...zonaOptions);
@@ -293,7 +305,8 @@ function renderSubmitButton() {
   const btn = el('button', {
     className: 'calc-submit__btn',
     id: 'calc-submit-btn',
-  }, '📋 Calcular precio');
+  }, 'Calcular precio');
+  btn.insertBefore(iconClipboard({ size: 18 }), btn.firstChild);
 
   return el('div', { className: 'calc-submit' }, btn);
 }
@@ -386,7 +399,7 @@ function handleCalculate() {
   if (!params) {
     resultArea.appendChild(
       el('div', { className: 'empty-state' },
-        el('div', { className: 'empty-state__icon' }, '🔍'),
+        el('div', { className: 'empty-state__icon' }, iconSearch({ size: 40, stroke: 1.5 })),
         el('p', { className: 'empty-state__text' }, 'Selecciona una pieza del catálogo para calcular su precio.'),
       )
     );
@@ -425,7 +438,7 @@ function handleCalculate() {
     ariaExpanded: 'false',
   },
     'Ver desglose de costos ',
-    el('span', { className: 'result-card__breakdown-toggle-icon' }, '▼'),
+    el('span', { className: 'result-card__breakdown-toggle-icon' }, iconChevronDown({ size: 14 })),
   );
 
   const items = [
@@ -465,10 +478,10 @@ function handleCalculate() {
 
   // Botones de acción
   const saveBtn = el('button', { className: 'result-actions__btn result-actions__btn--save' },
-    '💾 Guardar cotización'
+    iconSave({ size: 16 }), ' Guardar cotización'
   );
   const shareBtn = el('button', { className: 'result-actions__btn result-actions__btn--share' },
-    '📤 Compartir'
+    iconShare({ size: 16 }), ' Compartir'
   );
 
   on(saveBtn, 'click', () => {
@@ -496,11 +509,15 @@ function handleCalculate() {
     });
 
     // Feedback visual
-    saveBtn.textContent = '✅ Guardado';
+    saveBtn.innerHTML = '';
+    saveBtn.appendChild(iconCheck({ size: 16 }));
+    saveBtn.appendChild(document.createTextNode(' Guardado'));
     saveBtn.style.background = 'var(--color-salvia)';
     saveBtn.style.color = 'var(--color-blanco)';
     setTimeout(() => {
-      saveBtn.textContent = '💾 Guardar cotización';
+      saveBtn.innerHTML = '';
+      saveBtn.appendChild(iconSave({ size: 16 }));
+      saveBtn.appendChild(document.createTextNode(' Guardar cotización'));
       saveBtn.style.background = '';
       saveBtn.style.color = '';
     }, 2000);
@@ -508,7 +525,7 @@ function handleCalculate() {
 
   on(shareBtn, 'click', () => {
     const lines = [
-      `📋 *Cotización — ${params.nombre}*`,
+      `*Cotización — ${params.nombre}*`,
       '',
       `• Peso: ${formatGramos(params.peso_g)}`,
       `• Tamaño: ${capitalize(params.tamano)}`,
@@ -516,16 +533,24 @@ function handleCalculate() {
       `• Canal: ${canalNombre}`,
       `• Entrega: ${urgenciaNombre}`,
       '',
-      `💰 *Precio: ${formatMXN(result.precioFinal)}*`,
-      `📊 Ganancia: ${formatMXN(result.gananciaMXN)} (${formatPercent(result.gananciaPct / 100, 0)})`,
+      `*Precio: ${formatMXN(result.precioFinal)}*`,
+      `Ganancia: ${formatMXN(result.gananciaMXN)} (${formatPercent(result.gananciaPct / 100, 0)})`,
     ];
 
     if (navigator.clipboard) {
       navigator.clipboard.writeText(lines.join('\n')).then(() => {
-        shareBtn.textContent = '✅ Copiado';
-        setTimeout(() => { shareBtn.textContent = '📤 Compartir'; }, 2000);
+        shareBtn.innerHTML = '';
+        shareBtn.appendChild(iconCheck({ size: 16 }));
+        shareBtn.appendChild(document.createTextNode(' Copiado'));
+        setTimeout(() => {
+          shareBtn.innerHTML = '';
+          shareBtn.appendChild(iconShare({ size: 16 }));
+          shareBtn.appendChild(document.createTextNode(' Compartir'));
+        }, 2000);
       }).catch(() => {
-        shareBtn.textContent = '⚠ Error';
+        shareBtn.innerHTML = '';
+        shareBtn.appendChild(iconWarning({ size: 16 }));
+        shareBtn.appendChild(document.createTextNode(' Error'));
       });
     }
   });
