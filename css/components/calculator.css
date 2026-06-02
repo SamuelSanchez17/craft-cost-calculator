@@ -1,0 +1,652 @@
+/* ────────────────────────────────────────────
+   Calculadora — Formulario + Resultados
+   Diseño tipo ticket artesanal con
+   radio cards, switches, y desglose colapsable
+   ──────────────────────────────────────────── */
+
+/* ════════════════════════════════════════════
+   Selector de pieza (buscable)
+   ════════════════════════════════════════════ */
+
+.piece-selector {
+  position: relative;
+}
+
+.piece-selector__input {
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  padding-right: var(--space-10);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  min-height: 46px;
+  transition: border-color var(--transition-fast),
+              box-shadow var(--transition-fast);
+}
+
+.piece-selector__input:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(198, 123, 92, 0.15);
+  outline: none;
+}
+
+.piece-selector__input::placeholder {
+  color: var(--text-muted);
+}
+
+.piece-selector__caret {
+  position: absolute;
+  right: var(--space-4);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-size: var(--text-xs);
+  pointer-events: none;
+}
+
+.piece-selector__dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: var(--space-1);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: var(--z-dropdown);
+  display: none;
+}
+
+.piece-selector__dropdown--open {
+  display: block;
+}
+
+.piece-selector__option {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.piece-selector__option:hover,
+.piece-selector__option--highlighted {
+  background: var(--bg-surface-hover);
+}
+
+.piece-selector__option-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.piece-selector__empty {
+  padding: var(--space-4);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+/* ════════════════════════════════════════════
+   Radio Cards — Selector visual de yeso
+   ════════════════════════════════════════════ */
+
+.radio-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2);
+}
+
+.radio-card {
+  position: relative;
+  cursor: pointer;
+}
+
+.radio-card input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.radio-card__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-3) var(--space-2);
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  text-align: center;
+  transition: border-color var(--transition-fast),
+              background var(--transition-fast),
+              box-shadow var(--transition-fast);
+}
+
+.radio-card__content:hover {
+  border-color: var(--color-terracota-light);
+}
+
+.radio-card input:checked + .radio-card__content {
+  border-color: var(--color-terracota);
+  background: rgba(198, 123, 92, 0.06);
+  box-shadow: 0 0 0 1px var(--color-terracota);
+}
+
+.radio-card__name {
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  line-height: var(--line-height-tight);
+}
+
+.radio-card__price {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-accent);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ════════════════════════════════════════════
+   Selectores genéricos (zona, canal, urgencia)
+   ════════════════════════════════════════════ */
+
+.select-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.select-group__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.select-group__label {
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+/* ════════════════════════════════════════════
+   Toggles (color, sellador, detalle)
+   Usa .toggle-row y .switch de main.css
+   ════════════════════════════════════════════ */
+
+.toggle-row__hint {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.toggle-row__price {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-accent);
+  margin-left: var(--space-1);
+}
+
+/* ════════════════════════════════════════════
+   Ajuste de desmolde — radio group
+   ════════════════════════════════════════════ */
+
+.desmolde-options {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.desmolde-option {
+  position: relative;
+}
+
+.desmolde-option input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.desmolde-option__content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-4);
+  background: var(--bg-surface);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.desmolde-option__content:hover {
+  background: var(--bg-surface-hover);
+}
+
+.desmolde-option input:checked + .desmolde-option__content {
+  background: rgba(198, 123, 92, 0.08);
+  font-weight: var(--font-weight-medium);
+}
+
+.desmolde-option__check {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: border-color var(--transition-fast),
+              background var(--transition-fast);
+}
+
+.desmolde-option input:checked + .desmolde-option__content .desmolde-option__check {
+  border-color: var(--color-terracota);
+  background: var(--color-terracota);
+}
+
+.desmolde-option__check::after {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-blanco);
+  transform: scale(0);
+  transition: transform var(--transition-fast);
+}
+
+.desmolde-option input:checked + .desmolde-option__content .desmolde-option__check::after {
+  transform: scale(1);
+}
+
+.desmolde-option__label {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+}
+
+.desmolde-option__price {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-accent);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ════════════════════════════════════════════
+   Range slider — Esfuerzo extra
+   ════════════════════════════════════════════ */
+
+.effort-range {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.effort-range__slider {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: var(--border-color);
+  border-radius: var(--radius-full);
+  outline: none;
+}
+
+.effort-range__slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--color-terracota);
+  border: 2px solid var(--color-blanco);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: transform var(--transition-fast);
+}
+
+.effort-range__slider::-webkit-slider-thumb:active {
+  transform: scale(1.15);
+}
+
+.effort-range__value {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-accent);
+  min-width: 40px;
+  text-align: right;
+}
+
+.effort-range__marks {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  padding: 0 2px;
+  margin-top: var(--space-1);
+}
+
+/* ════════════════════════════════════════════
+   Botón calcular
+   ════════════════════════════════════════════ */
+
+.calc-submit {
+  margin-top: var(--space-6);
+}
+
+.calc-submit__btn {
+  width: 100%;
+  padding: var(--space-4) var(--space-6);
+  background: var(--color-terracota);
+  color: var(--color-blanco);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  font-weight: var(--font-weight-semibold);
+  cursor: pointer;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  transition: background var(--transition-fast),
+              transform var(--transition-fast),
+              box-shadow var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.calc-submit__btn:hover {
+  background: var(--color-terracota-dark);
+  box-shadow: var(--shadow-md);
+}
+
+.calc-submit__btn:active {
+  transform: scale(0.98);
+}
+
+.calc-submit__btn:disabled {
+  background: var(--border-color);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* ════════════════════════════════════════════
+   Panel de resultados — Ticket / Recibo
+   ════════════════════════════════════════════ */
+
+.calc-result {
+  margin-top: var(--space-6);
+  display: none;
+}
+
+.calc-result--visible {
+  display: block;
+  animation: fadeSlideIn var(--transition-base) ease;
+}
+
+.result-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ─── Cabecera del ticket ─── */
+.result-card__header {
+  background: var(--color-marron);
+  color: var(--color-crema);
+  padding: var(--space-5) var(--space-5);
+  text-align: center;
+}
+
+.result-card__piece-name {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: var(--space-1);
+  line-height: var(--line-height-tight);
+}
+
+.result-card__meta {
+  font-size: var(--text-xs);
+  opacity: 0.7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+}
+
+.result-card__meta span {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* ─── Precio grande ─── */
+.result-card__price {
+  padding: var(--space-6) var(--space-5);
+  text-align: center;
+  background: var(--bg-surface);
+}
+
+.result-card__price-label {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--space-1);
+}
+
+.result-card__price-value {
+  font-family: var(--font-heading);
+  font-size: var(--text-4xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-terracota);
+  line-height: 1;
+}
+
+.result-card__price-channel {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-top: var(--space-2);
+}
+
+.result-card__price-ganancia {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  padding: 2px var(--space-3);
+  background: rgba(125, 155, 118, 0.12);
+  color: var(--color-salvia-dark);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-full);
+}
+
+[data-theme="dark"] .result-card__price-ganancia {
+  background: rgba(125, 155, 118, 0.15);
+  color: var(--color-salvia-light);
+}
+
+/* ─── Desglose colapsable ─── */
+.result-card__breakdown-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-3) var(--space-5);
+  background: var(--bg-surface-alt);
+  border-top: 1px solid var(--border-color);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--transition-fast),
+              color var(--transition-fast);
+}
+
+.result-card__breakdown-toggle:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+}
+
+.result-card__breakdown-toggle-icon {
+  font-size: var(--text-xs);
+  transition: transform var(--transition-base);
+}
+
+.result-card__breakdown-toggle[aria-expanded="true"] .result-card__breakdown-toggle-icon {
+  transform: rotate(180deg);
+}
+
+.result-card__breakdown {
+  border-top: 1px solid var(--border-color);
+  display: none;
+}
+
+.result-card__breakdown--open {
+  display: block;
+}
+
+.result-card__breakdown-list {
+  padding: var(--space-3) var(--space-5);
+}
+
+.result-card__breakdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2) 0;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.result-card__breakdown-item + .result-card__breakdown-item {
+  border-top: 1px dashed var(--border-color);
+}
+
+.result-card__breakdown-item--total {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  font-size: var(--text-base);
+  padding-top: var(--space-3);
+  margin-top: var(--space-1);
+  border-top: 2px solid var(--border-color);
+}
+
+.result-card__breakdown-value {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+}
+
+/* ─── Acciones del resultado ─── */
+.result-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.result-actions__btn {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  transition: background var(--transition-fast),
+              color var(--transition-fast),
+              transform var(--transition-fast);
+}
+
+.result-actions__btn:active {
+  transform: scale(0.97);
+}
+
+.result-actions__btn--save {
+  background: var(--bg-surface-alt);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.result-actions__btn--save:hover {
+  background: var(--border-color);
+}
+
+.result-actions__btn--share {
+  background: var(--color-salvia);
+  color: var(--color-blanco);
+  border: 1px solid var(--color-salvia);
+}
+
+.result-actions__btn--share:hover {
+  background: var(--color-salvia-dark);
+}
+
+/* ════════════════════════════════════════════
+   Sección del formulario
+   ════════════════════════════════════════════ */
+
+.calc-section {
+  margin-bottom: var(--space-6);
+}
+
+.calc-section__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* ════════════════════════════════════════════
+   Responsive
+   ════════════════════════════════════════════ */
+
+@media (max-width: 400px) {
+  .radio-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .select-group {
+    grid-template-columns: 1fr;
+  }
+
+  .result-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .result-card__price-value {
+    font-size: var(--text-3xl);
+  }
+}
