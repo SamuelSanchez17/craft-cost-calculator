@@ -1,0 +1,581 @@
+/* ────────────────────────────────────────────
+   Combo Builder — Construcción de arreglos/combos
+   Dos paneles: disponibles (izq) + combo actual (der)
+   ──────────────────────────────────────────── */
+
+/* ════════════════════════════════════════════
+   Layout principal
+   ════════════════════════════════════════════ */
+
+.combo-builder {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
+@media (max-width: 700px) {
+  .combo-builder {
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+  }
+}
+
+/* ════════════════════════════════════════════
+   Panel izquierdo — Items disponibles
+   ════════════════════════════════════════════ */
+
+.combo-available {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  max-height: 70vh;
+}
+
+.combo-available__header {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.combo-available__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+/* Tabs */
+
+.combo-tabs {
+  display: flex;
+  gap: var(--space-1);
+}
+
+.combo-tab {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-muted);
+  background: var(--bg-surface-alt);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+}
+
+.combo-tab:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-secondary);
+}
+
+.combo-tab--active {
+  background: var(--color-terracota);
+  color: var(--color-blanco);
+  border-color: var(--color-terracota);
+}
+
+/* Búsqueda */
+
+.combo-search {
+  position: relative;
+}
+
+.combo-search__input {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  padding-left: var(--space-8);
+  background: var(--bg-surface-alt);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  transition: border-color var(--transition-fast);
+}
+
+.combo-search__input:focus {
+  border-color: var(--border-focus);
+  outline: none;
+}
+
+.combo-search__icon {
+  position: absolute;
+  left: var(--space-3);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+}
+
+/* Lista de items disponibles */
+
+.combo-available__list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-2);
+}
+
+.combo-available__empty {
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+}
+
+.combo-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+  cursor: pointer;
+}
+
+.combo-item:hover {
+  background: var(--bg-surface-hover);
+}
+
+.combo-item__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.combo-item__name {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.combo-item__meta {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.combo-item__add {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--color-terracota);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.combo-item__add:hover {
+  background: var(--color-terracota);
+  color: var(--color-blanco);
+  border-color: var(--color-terracota);
+}
+
+.combo-item__add:active {
+  transform: scale(0.92);
+}
+
+/* ════════════════════════════════════════════
+   Panel derecho — Combo actual
+   ════════════════════════════════════════════ */
+
+.combo-current {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.combo-current__header {
+  padding: var(--space-4);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.combo-current__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.combo-current__input {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  background: var(--bg-surface-alt);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  transition: border-color var(--transition-fast);
+}
+
+.combo-current__input:focus {
+  border-color: var(--border-focus);
+  outline: none;
+}
+
+.combo-current__input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Lista de items en combo */
+
+.combo-current__list {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-2);
+}
+
+.combo-current__empty {
+  padding: var(--space-8);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--text-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.combo-current-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--bg-surface-alt);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-2);
+}
+
+.combo-current-item:last-child {
+  margin-bottom: 0;
+}
+
+.combo-current-item__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.combo-current-item__name {
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.combo-current-item__meta {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.combo-current-item__meta svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Cantidad */
+
+.combo-qty {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.combo-qty__btn {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: var(--text-sm);
+  transition: all var(--transition-fast);
+}
+
+.combo-qty__btn:hover {
+  background: var(--bg-surface-hover);
+  border-color: var(--color-terracota-light);
+}
+
+.combo-qty__btn:active {
+  transform: scale(0.92);
+}
+
+.combo-qty__value {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Subtotal y acciones */
+
+.combo-current-item__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.combo-current-item__price {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-accent);
+  font-weight: var(--font-weight-semibold);
+  min-width: 48px;
+  text-align: right;
+}
+
+.combo-current-item__remove {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.combo-current-item__remove:hover {
+  color: var(--color-error);
+}
+
+/* ════════════════════════════════════════════
+   Resumen de totales
+   ════════════════════════════════════════════ */
+
+.combo-summary {
+  padding: var(--space-4);
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-surface-alt);
+}
+
+.combo-summary__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  padding: var(--space-1) 0;
+}
+
+.combo-summary__row--total {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  font-size: var(--text-base);
+  padding-top: var(--space-2);
+  margin-top: var(--space-1);
+  border-top: 1px dashed var(--border-color);
+}
+
+.combo-summary__value {
+  font-family: var(--font-mono);
+  color: var(--text-primary);
+}
+
+.combo-summary__final {
+  text-align: center;
+  padding: var(--space-3) 0;
+  margin-top: var(--space-2);
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.combo-summary__final-label {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--space-1);
+}
+
+.combo-summary__final-value {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-terracota);
+  line-height: 1;
+}
+
+.combo-summary__final-meta {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-top: var(--space-1);
+}
+
+.combo-summary__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+/* Selector de canal en combo */
+
+.combo-channel {
+  margin-bottom: var(--space-3);
+}
+
+.combo-channel__label {
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: var(--space-1);
+  display: block;
+}
+
+/* ════════════════════════════════════════════
+   Modal de configuración de pieza
+   ════════════════════════════════════════════ */
+
+.combo-config-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 21, 18, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.combo-config-modal {
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-xl);
+}
+
+.combo-config-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.combo-config-modal__title {
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+}
+
+.combo-config-modal__close {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  border: none;
+  background: var(--bg-surface-alt);
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.combo-config-modal__close:hover {
+  background: var(--border-color);
+  color: var(--text-primary);
+}
+
+.combo-config-modal__body {
+  padding: var(--space-4) var(--space-5);
+}
+
+.combo-config-modal__footer {
+  display: flex;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--border-color);
+}
+
+.combo-config-modal__footer .btn {
+  flex: 1;
+}
+
+/* ════════════════════════════════════════════
+   Responsive
+   ════════════════════════════════════════════ */
+
+@media (max-width: 700px) {
+  .combo-builder {
+    grid-template-columns: 1fr;
+  }
+
+  .combo-available {
+    max-height: none;
+  }
+
+  .combo-available__list,
+  .combo-current__list {
+    max-height: 40vh;
+  }
+}
+
+@media (max-width: 400px) {
+  .combo-current-item {
+    grid-template-columns: 1fr auto;
+    gap: var(--space-2);
+  }
+
+  .combo-current-item__right {
+    grid-column: 1 / -1;
+    justify-content: space-between;
+    padding-top: var(--space-1);
+    border-top: 1px dashed var(--border-color);
+  }
+}

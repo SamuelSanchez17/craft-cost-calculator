@@ -12,6 +12,7 @@ import { mountCalculator } from './ui/calculator-ui.js';
 import { mountCatalog } from './ui/catalog-ui.js';
 import { mountCandles } from './ui/candles-ui.js';
 import { mountSettings } from './ui/settings-ui.js';
+import { mountCombo } from './ui/combo-ui.js';
 import { showPanel } from './ui/renderer.js';
 
 // ─── Datos iniciales: merge de defaults + localStorage ───
@@ -159,6 +160,11 @@ function mountPanel(panelId) {
       mountedCleanups.set('settings', cleanup);
       break;
     }
+    case 'combos': {
+      const cleanup = mountCombo();
+      mountedCleanups.set('combos', cleanup);
+      break;
+    }
     // Futuros paneles se montarán aquí
   }
 }
@@ -213,13 +219,13 @@ if (settingsBtn) {
 // ─── Iniciar con panel activo ───
 
 const startPanel = initialState.activePanel;
-mountPanel(startPanel);
+navigateTo(startPanel);
 
 // Si el panel activo es uno que no tiene UI aún (settings, combos, etc.)
 // mostrar un estado placeholder para que no se vea vacío
   if (!mountedCleanups.has(startPanel)) {
     const panel = document.getElementById(startPanel);
-    if (panel && !['calculator', 'catalog', 'candles', 'settings'].includes(startPanel)) {
+    if (panel && !['calculator', 'catalog', 'candles', 'settings', 'combos'].includes(startPanel)) {
       panel.innerHTML = `
         <h2 class="section-title">En desarrollo</h2>
         <p class="section-subtitle">Esta sección estará disponible próximamente.</p>
