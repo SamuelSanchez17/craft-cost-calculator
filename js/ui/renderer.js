@@ -32,6 +32,8 @@ export function el(tag, attrs, ...children) {
         element.setAttribute(key, value);
       } else if (key === 'style' && typeof value === 'object') {
         Object.assign(element.style, value);
+      } else if (key === 'selected' || key === 'checked' || key === 'disabled') {
+        element[key] = value;
       } else if (key.startsWith('on') && typeof value === 'function') {
         const event = key.slice(2).toLowerCase();
         element.addEventListener(event, value);
