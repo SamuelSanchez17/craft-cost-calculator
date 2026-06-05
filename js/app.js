@@ -13,6 +13,7 @@ import { mountCatalog } from './ui/catalog-ui.js';
 import { mountCandles } from './ui/candles-ui.js';
 import { mountSettings } from './ui/settings-ui.js';
 import { mountCombo } from './ui/combo-ui.js';
+import { mountQuote } from './ui/quote-ui.js';
 import { showPanel } from './ui/renderer.js';
 
 // ─── Datos iniciales: merge de defaults + localStorage ───
@@ -165,7 +166,11 @@ function mountPanel(panelId) {
       mountedCleanups.set('combos', cleanup);
       break;
     }
-    // Futuros paneles se montarán aquí
+    case 'quote': {
+      const cleanup = mountQuote();
+      mountedCleanups.set('quote', cleanup);
+      break;
+    }
   }
 }
 
@@ -225,7 +230,7 @@ navigateTo(startPanel);
 // mostrar un estado placeholder para que no se vea vacío
   if (!mountedCleanups.has(startPanel)) {
     const panel = document.getElementById(startPanel);
-    if (panel && !['calculator', 'catalog', 'candles', 'settings', 'combos'].includes(startPanel)) {
+    if (panel && !['calculator', 'catalog', 'candles', 'settings', 'combos', 'quote'].includes(startPanel)) {
       panel.innerHTML = `
         <h2 class="section-title">En desarrollo</h2>
         <p class="section-subtitle">Esta sección estará disponible próximamente.</p>
