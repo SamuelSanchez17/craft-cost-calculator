@@ -304,7 +304,7 @@ function renderZonasSection() {
   const settings = cloneSettings();
 
   const rows = Object.entries(settings.tarifasZona).map(([key, val]) => {
-    const name = key === 'pueblo' ? 'Pueblo (incl. Tapachula)' : 'Ciudad';
+    const name = key === 'pueblo' ? 'Pueblo' : 'Ciudad';
 
     const input = el('input', {
       className: 'settings-zona-row__input',

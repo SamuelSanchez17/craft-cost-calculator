@@ -183,12 +183,10 @@ function mountPanel(panelId) {
 function navigateTo(panelId) {
   if (!panelId) return;
 
-  console.log('[navigateTo] panel:', panelId);
-
   // 1. Mostrar el panel solicitado
   showPanel(panelId);
 
-  // 2. Montar el panel si no está montado (con error handling)
+  // 2. Montar el panel si no está montado
   try {
     mountPanel(panelId);
   } catch (err) {

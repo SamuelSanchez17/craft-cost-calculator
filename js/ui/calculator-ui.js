@@ -179,7 +179,7 @@ function renderSelectGroup() {
   // Zona
   const zonaOptions = Object.values(store.getState().settings.tarifasZona).map((tarifa, i) => {
     const keys = ['pueblo', 'ciudad'];
-    const names = ['Pueblo (incl. Tapachula)', 'Ciudad'];
+    const names = ['Pueblo', 'Ciudad'];
     return el('option', { value: keys[i] }, `${names[i]} — $${tarifa.toFixed(2)}/min`);
   });
 
