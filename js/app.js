@@ -183,26 +183,27 @@ function mountPanel(panelId) {
 function navigateTo(panelId) {
   if (!panelId) return;
 
+  console.log('[navigateTo] panel:', panelId);
+
   // 1. Mostrar el panel solicitado
   showPanel(panelId);
 
-  // 2. Montar el panel si no está montado
-  mountPanel(panelId);
+  // 2. Montar el panel si no está montado (con error handling)
+  try {
+    mountPanel(panelId);
+  } catch (err) {
+    console.error('[navigateTo] mountPanel error:', err);
+  }
 
-  // 3. Actualizar tabs de navegación ANTES de cualquier otra cosa
+  // 3. Actualizar tabs de navegación
   const allTabs = document.querySelectorAll('.nav-tab');
   allTabs.forEach((tab) => {
-    const isTarget = tab.dataset.panel === panelId;
-    if (isTarget) {
-      tab.classList.add('nav-tab--active');
-    } else {
-      tab.classList.remove('nav-tab--active');
-    }
+    tab.classList.toggle('nav-tab--active', tab.dataset.panel === panelId);
   });
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 
-  // 4. Actualizar estado global al final
+  // 4. Actualizar estado global
   store.setState({ activePanel: panelId });
 }
 
@@ -213,6 +214,17 @@ document.querySelectorAll('.nav-tab').forEach((tab) => {
     e.preventDefault();
     e.stopPropagation();
     navigateTo(tab.dataset.panel);
+  });
+});
+
+// ─── Sincronizar tabs con estado del store ───
+
+store.subscribe((state) => {
+  const panel = state.activePanel;
+  if (!panel) return;
+  const allTabs = document.querySelectorAll('.nav-tab');
+  allTabs.forEach((tab) => {
+    tab.classList.toggle('nav-tab--active', tab.dataset.panel === panel);
   });
 });
 

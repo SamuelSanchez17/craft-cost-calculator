@@ -424,13 +424,20 @@ function refreshUI() {
   if (!container) return;
 
   const contentEl = qs('#quote-content', container);
+  console.log('[quote-ui] refreshUI, contentEl exists:', !!contentEl, 'quoteItems:', quoteItems.length);
   if (!contentEl) return;
 
   clear(contentEl);
 
-  contentEl.appendChild(renderHistoryPicker());
-  contentEl.appendChild(renderCurrentCalcSection());
-  contentEl.appendChild(renderItemsTable());
+  const hp = renderHistoryPicker();
+  contentEl.appendChild(hp);
+  console.log('[quote-ui] historyPicker children:', hp.children.length);
+
+  const current = renderCurrentCalcSection();
+  if (current) contentEl.appendChild(current);
+
+  const table = renderItemsTable();
+  contentEl.appendChild(table);
 
   const preview = renderPreview();
   contentEl.appendChild(preview);
@@ -442,11 +449,13 @@ function refreshUI() {
 // ─── Mount ───
 
 export function mountQuote() {
+  console.log('[quote-ui] mountQuote called');
   container = document.getElementById('quote');
   if (!container) {
     console.warn('[quote-ui] No se encontro #quote en el DOM');
     return () => {};
   }
+  console.log('[quote-ui] container found, history in store:', (store.getState().history || []).length);
 
   clear(container);
 
@@ -467,14 +476,21 @@ export function mountQuote() {
 
   // Event delegation para seleccionar items del historial
   on(contentEl, 'click', (e) => {
+    console.log('[quote-ui] click target:', e.target, 'closest:', e.target.closest('.quote-builder__history-item'));
     const historyItem = e.target.closest('.quote-builder__history-item');
-    if (!historyItem) return;
+    if (!historyItem) {
+      console.log('[quote-ui] no historyItem found, classList:', e.target.className);
+      return;
+    }
 
     const id = historyItem.dataset.id;
+    console.log('[quote-ui] historyItem clicked, id:', id);
     if (!id) return;
 
     const history = store.getState().history || [];
+    console.log('[quote-ui] history length:', history.length);
     const entry = history.find((h) => String(h.id) === String(id));
+    console.log('[quote-ui] entry found:', entry);
     if (!entry) return;
 
     const alreadyIdx = quoteItems.findIndex((qi) => String(qi.id) === String(id));
@@ -492,7 +508,7 @@ export function mountQuote() {
         fecha: entry.fecha || new Date().toISOString(),
       });
     }
-
+    console.log('[quote-ui] quoteItems after action:', quoteItems.length, 'items');
     refreshUI();
   });
 
