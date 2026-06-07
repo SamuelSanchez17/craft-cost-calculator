@@ -441,7 +441,16 @@
    ════════════════════════════════════════════ */
 
 [data-theme="dark"] .catalog-modal-overlay {
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.7);
+}
+
+[data-theme="dark"] .catalog-card {
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .catalog-card:hover {
+  border-color: var(--color-terracota-light);
+  box-shadow: var(--shadow-lg);
 }
 
 [data-theme="dark"] .catalog-card__action--delete {
@@ -450,4 +459,22 @@
 
 [data-theme="dark"] .catalog-card__action--delete:hover {
   background: rgba(217, 112, 102, 0.22);
+}
+
+[data-theme="dark"] .catalog-search__input {
+  background: var(--bg-surface-alt);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .catalog-search__input::placeholder {
+  color: var(--text-muted);
+}
+
+[data-theme="dark"] .catalog-fab {
+  background: var(--color-terracota);
+  box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark"] .catalog-fab:hover {
+  background: var(--color-terracota-dark);
 }

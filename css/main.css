@@ -19,6 +19,7 @@ body {
   flex-direction: column;
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
+  transition: var(--transition-theme);
 }
 
 ::selection {
@@ -45,6 +46,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 0 var(--space-4);
+  transition: var(--transition-theme);
 }
 
 .app-main {
@@ -56,6 +58,7 @@ body {
   padding-right: var(--space-4);
   padding-bottom: calc(var(--footer-height) + var(--space-6));
   overflow-x: hidden;
+  transition: var(--transition-theme);
 }
 
 .app-footer {
@@ -70,6 +73,7 @@ body {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: var(--transition-theme);
 }
 
 /* ─── Paneles ─── */
@@ -121,8 +125,8 @@ body {
 }
 
 .card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
 }
 
 .card--flat {
@@ -438,5 +442,150 @@ body {
   .app-main {
     padding-left: var(--space-6);
     padding-right: var(--space-6);
+  }
+}
+
+/* ════════════════════════════════════════════
+   Skeleton Loaders — Estados de carga
+   ════════════════════════════════════════════ */
+
+@keyframes skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-surface-alt) 25%,
+    var(--bg-surface-hover) 50%,
+    var(--bg-surface-alt) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+.skeleton--circle {
+  border-radius: 50%;
+}
+
+.skeleton-text {
+  display: block;
+  height: 1em;
+  margin-bottom: var(--space-1);
+}
+
+.skeleton-text--sm { width: 60%; }
+.skeleton-text--md { width: 80%; }
+.skeleton-text--lg { width: 100%; }
+
+.skeleton-card {
+  padding: var(--space-5);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+}
+
+/* ════════════════════════════════════════════
+   Shake Animation — Errores de validación
+   ════════════════════════════════════════════ */
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.shake {
+  animation: shake 400ms ease-in-out;
+}
+
+/* ════════════════════════════════════════════
+   Pulse Animation — Loading states
+   ════════════════════════════════════════════ */
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ════════════════════════════════════════════
+   Slide Up Fade — Nuevos items en listas
+   ════════════════════════════════════════════ */
+
+@keyframes slideUpFade {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-up-fade {
+  animation: slideUpFade var(--transition-base) ease-out;
+}
+
+/* ════════════════════════════════════════════
+   Fade In — Elementos que aparecen
+   ════════════════════════════════════════════ */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn var(--transition-fast) ease-out;
+}
+
+/* ════════════════════════════════════════════
+   Spin — Indicadores de carga circulares
+   ════════════════════════════════════════════ */
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+/* ════════════════════════════════════════════
+   Reduce motion — Respetar preferencia usuario
+   ════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+    background: var(--bg-surface-alt);
+  }
+
+  .shake {
+    animation: none;
+  }
+
+  .pulse {
+    animation: none;
+  }
+
+  .slide-up-fade {
+    animation: none;
+  }
+
+  .fade-in {
+    animation: none;
+  }
+
+  .spin {
+    animation: none;
   }
 }

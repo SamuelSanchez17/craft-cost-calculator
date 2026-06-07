@@ -383,6 +383,72 @@
   }
 }
 
+/* ─── Dark mode overrides ─── */
+
+[data-theme="dark"] .quote-builder__history-list {
+  border-color: var(--border-color);
+  background: var(--bg-surface);
+}
+
+[data-theme="dark"] .quote-builder__history-item {
+  border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .quote-builder__history-item:hover {
+  background: var(--bg-surface-hover);
+}
+
+[data-theme="dark"] .quote-builder__history-item--selected {
+  background: rgba(198, 123, 92, 0.15);
+}
+
+[data-theme="dark"] .quote-items__table th {
+  border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .quote-items__table td {
+  border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .quote-card {
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .quote-card__header {
+  background: var(--color-marron-dark);
+  color: var(--color-crema);
+}
+
+[data-theme="dark"] .quote-card__total-value {
+  color: var(--color-terracota-light);
+}
+
+[data-theme="dark"] .quote-items__qty-input {
+  background: var(--bg-surface-alt);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .quote-actions__btn--copy {
+  background: var(--bg-surface-alt);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .quote-actions__btn--copy:hover {
+  background: var(--border-color);
+}
+
+[data-theme="dark"] .quote-builder__section-title {
+  border-bottom-color: var(--border-color);
+}
+
+[data-theme="dark"] .history-filters__search-input {
+  background: var(--bg-surface-alt);
+  border-color: var(--border-color);
+  color: var(--text-primary);
+}
+
 /* ─── Impresión ─── */
 
 @media print {

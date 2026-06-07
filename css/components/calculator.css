@@ -419,6 +419,12 @@
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-fast), transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.result-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
 }
 
 /* ─── Cabecera del ticket ─── */
@@ -672,5 +678,31 @@
 
   .radio-card__price {
     font-size: 10px;
+  }
+}
+
+/* ─── Error shake en inputs ─── */
+
+.input-error {
+  border-color: var(--color-error) !important;
+  animation: shake 400ms ease-in-out;
+}
+
+.input-error:focus {
+  border-color: var(--color-error) !important;
+  box-shadow: 0 0 0 3px rgba(198, 87, 74, 0.15);
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+/* ─── Reduce motion ─── */
+
+@media (prefers-reduced-motion: reduce) {
+  .input-error {
+    animation: none;
   }
 }

@@ -105,6 +105,7 @@
   --transition-fast:        150ms ease;
   --transition-base:        250ms ease;
   --transition-slow:        400ms ease;
+  --transition-theme:       background-color 300ms ease, color 300ms ease, border-color 300ms ease, box-shadow 300ms ease;
 
   /* ─── Z-index ─── */
   --z-dropdown:             100;

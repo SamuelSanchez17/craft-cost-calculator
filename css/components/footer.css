@@ -30,7 +30,8 @@
   cursor: pointer;
   border-radius: var(--radius-md);
   transition: color var(--transition-fast),
-              background var(--transition-fast);
+              background var(--transition-fast),
+              transform var(--transition-fast);
   position: relative;
 }
 
@@ -57,6 +58,7 @@
   height: 3px;
   border-radius: 0 0 var(--radius-full) var(--radius-full);
   background: var(--color-dorado);
+  transition: width var(--transition-fast), background var(--transition-theme);
 }
 
 .nav-tab__icon {
