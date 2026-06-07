@@ -14,8 +14,10 @@ import {
 /**
  * Redondea hacia arriba al siguiente múltiplo de 5.
  * Math.ceil(price / 5) * 5
+ * Si precio es 0 o negativo, retorna 0.
  */
 export function redondearA5(precio) {
+  if (!precio || precio <= 0) return 0;
   return Math.ceil(precio / 5) * 5;
 }
 
@@ -68,9 +70,17 @@ export function calcularCosto(params) {
     costosDetalleFino = COSTOS_DETALLE_FINO,
   } = params;
 
-  const costoYeso       = redondear2(peso_g * precioYesoPorG);
+  const safeMinutos = Math.max(0, Number(minutos) || 0);
+  const safeMinutosExtra = Math.max(0, Number(minutosExtra) || 0);
+  const safePeso = Math.max(0, Number(peso_g) || 0);
+  const safePrecioYeso = Math.max(0, Number(precioYesoPorG) || 0);
+  const safeTarifa = Math.max(0, Number(tarifaPorMinuto) || 0);
+  const safeAjusteDesmolde = Math.max(0, Number(ajusteDesmolde) || 0);
+  const safeAjusteEsfuerzo = Math.max(0, Number(ajusteEsfuerzo) || 0);
+
+  const costoYeso       = redondear2(safePeso * safePrecioYeso);
   const costosFijos     = COSTO_FIJO_POR_PIEZA;
-  const manoDeObra      = redondear2((minutos + minutosExtra) * tarifaPorMinuto);
+  const manoDeObra      = redondear2((safeMinutos + safeMinutosExtra) * safeTarifa);
   const costoColor      = conColor ? (costosColor[tamano] || 0) : 0;
   const costoDetalle    = conDetalleFino ? (costosDetalleFino[tamano] || 0) : 0;
   const costoSellador   = conSellador ? (costosSellador[tamano] || 0) : 0;
@@ -82,8 +92,8 @@ export function calcularCosto(params) {
     + costoColor
     + costoDetalle
     + costoSellador
-    + (ajusteDesmolde || 0)
-    + (ajusteEsfuerzo || 0)
+    + safeAjusteDesmolde
+    + safeAjusteEsfuerzo
   );
 
   return {
@@ -94,8 +104,8 @@ export function calcularCosto(params) {
       costoColor,
       costoDetalle,
       costoSellador,
-      ajusteDesmolde: ajusteDesmolde || 0,
-      ajusteEsfuerzo: ajusteEsfuerzo || 0,
+      ajusteDesmolde: safeAjusteDesmolde,
+      ajusteEsfuerzo: safeAjusteEsfuerzo,
     },
     costoBase,
   };
@@ -115,11 +125,16 @@ export function calcularCosto(params) {
  * @returns {{ costoAjustado: number, precioMinimo: number, precioFinal: number, gananciaMXN: number, gananciaPct: number }}
  */
 export function calcularPrecioFinal({ costoBase, margen, recargoUrgencia = 0 }) {
-  const costoAjustado = redondear2(costoBase * (1 + recargoUrgencia));
-  const precioMinimo  = redondear2(costoAjustado / (1 - margen));
+  const safeCostoBase = Math.max(0, Number(costoBase) || 0);
+  const safeMargen = Math.max(0, Math.min(0.99, Number(margen) || 0));
+  const safeRecargo = Math.max(0, Number(recargoUrgencia) || 0);
+
+  const costoAjustado = redondear2(safeCostoBase * (1 + safeRecargo));
+  const denominador = 1 - safeMargen;
+  const precioMinimo = denominador > 0 ? redondear2(costoAjustado / denominador) : costoAjustado;
   const precioFinal   = redondearA5(precioMinimo);
-  const gananciaMXN   = redondear2(precioFinal - costoAjustado);
-  const gananciaPct   = redondear2((gananciaMXN / precioFinal) * 100);
+  const gananciaMXN   = redondear2(Math.max(0, precioFinal - costoAjustado));
+  const gananciaPct   = precioFinal > 0 ? redondear2((gananciaMXN / precioFinal) * 100) : 0;
 
   return {
     costoAjustado,
@@ -176,16 +191,22 @@ export function calcularVela(params) {
 
   const cfg = { ...CONFIG_VELAS, ...config };
 
-  const costoCera     = redondear2(pesoCeraG * cfg.precioCeraPorGramo);
-  const costoAroma    = redondear2(pesoAromaG * cfg.precioAromaPorGramo);
+  const safePesoCera = Math.max(0, Number(pesoCeraG) || 0);
+  const safePesoAroma = Math.max(0, Number(pesoAromaG) || 0);
+  const safeMinutos = Math.max(0, Number(minutos) || 0);
+  const safeTarifa = Math.max(0, Number(tarifaPorMinuto) || 0);
+  const safeCapas = Math.max(1, Number(capas) || 1);
+
+  const costoCera     = redondear2(safePesoCera * cfg.precioCeraPorGramo);
+  const costoAroma    = redondear2(safePesoAroma * cfg.precioAromaPorGramo);
   const costoColor    = conColor ? cfg.costoColorFijo : 0;
   const costoPabilo   = conPabilo ? cfg.costoPabiloFijo : 0;
   const costosFijos   = cfg.costoFijo;
-  const minutosTotal  = minutos + (conDecorado ? cfg.extraDecorarMinutos : 0);
-  const manoDeObra    = redondear2(minutosTotal * tarifaPorMinuto);
+  const minutosTotal  = safeMinutos + (conDecorado ? cfg.extraDecorarMinutos : 0);
+  const manoDeObra    = redondear2(minutosTotal * safeTarifa);
 
   const costoBase = redondear2(
-    (costoCera + costoAroma + costoColor + costoPabilo + costosFijos + manoDeObra) * capas
+    (costoCera + costoAroma + costoColor + costoPabilo + costosFijos + manoDeObra) * safeCapas
   );
 
   return {
@@ -196,7 +217,7 @@ export function calcularVela(params) {
       costoPabilo,
       costosFijos,
       manoDeObra,
-      capas,
+      capas: safeCapas,
     },
     costoBase,
   };

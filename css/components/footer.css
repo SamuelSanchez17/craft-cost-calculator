@@ -24,8 +24,8 @@
   align-items: center;
   justify-content: center;
   gap: 2px;
-  padding: var(--space-1) var(--space-2);
-  min-width: 48px;
+  padding: var(--space-1) var(--space-1);
+  min-width: 44px;
   color: rgba(245, 240, 235, 0.55);
   cursor: pointer;
   border-radius: var(--radius-md);
@@ -33,6 +33,17 @@
               background var(--transition-fast),
               transform var(--transition-fast);
   position: relative;
+}
+
+@media (max-width: 360px) {
+  .nav-tab {
+    min-width: 38px;
+    padding: var(--space-1) 4px;
+  }
+
+  .nav-tab__label {
+    font-size: 9px;
+  }
 }
 
 .nav-tab:hover {

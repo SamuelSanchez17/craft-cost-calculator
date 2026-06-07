@@ -383,6 +383,20 @@
   }
 }
 
+@media (max-width: 360px) {
+  .quote-items__table {
+    font-size: var(--text-xs);
+  }
+
+  .quote-items__qty-input {
+    width: 44px;
+  }
+
+  .quote-card__total-value {
+    font-size: var(--text-xl);
+  }
+}
+
 /* ─── Dark mode overrides ─── */
 
 [data-theme="dark"] .quote-builder__history-list {

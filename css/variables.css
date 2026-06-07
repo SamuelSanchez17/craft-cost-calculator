@@ -120,6 +120,22 @@
   --content-max-width:      640px;
 }
 
+/* ─── 320px baseline (small phones) ─── */
+@media (max-width: 400px) {
+  :root {
+    --text-base:   0.9375rem;  /* 15px — slightly smaller on very small screens */
+    --space-4:     0.875rem;   /* 14px */
+    --space-5:     1rem;       /* 16px */
+  }
+}
+
+/* ─── Large screens (desktop) ─── */
+@media (min-width: 1024px) {
+  :root {
+    --content-max-width: 800px;
+  }
+}
+
 /* ─── Tema Oscuro ─── */
 [data-theme="dark"] {
   --bg-body:                #1E1814;

@@ -42,7 +42,21 @@ function setItem(key, value) {
   try {
     localStorage.setItem(`${STORAGE_PREFIX}${key}`, JSON.stringify(value));
     return true;
-  } catch {
+  } catch (e) {
+    if (e.name === 'QuotaExceededError' || e.code === 22) {
+      console.warn('[storage] localStorage quota exceeded — trying cleanup');
+      try {
+        const history = getItem('history');
+        if (history && history.length > 10) {
+          history.length = 10;
+          localStorage.setItem(`${STORAGE_PREFIX}history`, JSON.stringify(history));
+          localStorage.setItem(`${STORAGE_PREFIX}${key}`, JSON.stringify(value));
+          return true;
+        }
+      } catch {
+        // Still failed — give up silently
+      }
+    }
     return false;
   }
 }
