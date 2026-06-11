@@ -23,6 +23,7 @@ import {
   ETIQUETAS_DESMOLDE,
 } from '../catalog.js';
 import { formatMXN, formatMXNShort, formatPercent, formatGramos, formatMinutos, capitalize } from '../utils/format.js';
+import { debounce, debounceCancelable } from '../utils/debounce.js';
 import { addToHistory } from '../storage.js';
 import { el, clear, qs, on, delegate } from './renderer.js';
 import {
@@ -95,7 +96,9 @@ function renderPieceSelector() {
     dropdown.classList.add('piece-selector__dropdown--open');
   }
 
-  on(input, 'input', () => filterPieces(input.value));
+  const filterPiecesDebounced = debounce((q) => filterPieces(q), 150);
+
+  on(input, 'input', () => filterPiecesDebounced(input.value));
   on(input, 'focus', () => { if (input.value) filterPieces(input.value); });
 
   // Cerrar dropdown al hacer clic fuera
@@ -659,10 +662,14 @@ export function mountCalculator() {
     }
   });
 
-  // Evento: actualizar precios al cambiar tamaño (vía settings)
-  const unsubscribe = store.subscribe(() => {
-    // Re-renderizar radio cards si cambian los settings de yeso
-    if (selectedPiece) updateTogglesCount();
+  let currentSettingsJson = '';
+
+  const unsubscribe = store.subscribe((state) => {
+    const settingsJson = JSON.stringify(state.settings.yesos);
+    if (selectedPiece && settingsJson !== currentSettingsJson) {
+      currentSettingsJson = settingsJson;
+      updateTogglesCount();
+    }
   });
 
   return () => {
