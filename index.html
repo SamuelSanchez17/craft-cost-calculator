@@ -3,9 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Calculadora de precios para piezas artesanales">
-  <meta name="theme-color" content="#f5f0eb">
-  <title>Calculadora de Precios Artesanales</title>
+  <meta name="description" content="Alelyvers - Cotizador de precios para piezas artesanales de yeso">
+  <meta name="theme-color" content="#ffef95">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Alelyvers">
+  <title>Alelyvers - Cotizador Artesanal</title>
+
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/images/icon-192.png">
+  <link rel="apple-touch-icon" href="assets/images/icon-192.png">
 
   <!-- Styles -->
   <link rel="stylesheet" href="css/reset.css">
@@ -24,9 +33,9 @@
 <body>
   <header class="app-header">
     <div class="header-brand">
-      <div class="header-logo">Y</div>
+      <img class="header-logo" src="assets/images/logo Alelyvers.png" alt="Alelyvers">
       <div>
-        <div class="header-title">Yeso Artesanal</div>
+        <div class="header-title">Alelyvers</div>
         <div class="header-subtitle">Cotizador</div>
       </div>
     </div>
@@ -105,5 +114,16 @@
 
   <!-- Scripts (ES modules) -->
   <script type="module" src="js/app.js"></script>
+
+  <!-- Service Worker Registration -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then((reg) => console.log('[PWA] Service Worker registrado:', reg.scope))
+          .catch((err) => console.warn('[PWA] Error registrando SW:', err));
+      });
+    }
+  </script>
 </body>
 </html>
