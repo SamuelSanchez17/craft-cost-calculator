@@ -45,7 +45,7 @@ function toWhatsAppText() {
   const fecha = formatDate(new Date().toISOString());
 
   const lines = [
-    `*Cotizacion -- Yeso Artesanal*`,
+    `*Cotización — Alelyvers*`,
     `_${fecha}_`,
     '',
   ];
@@ -81,7 +81,7 @@ function toPlainText() {
   const sep = '-'.repeat(44);
 
   const lines = [
-    'COTIZACION — Yeso Artesanal',
+    'COTIZACION — Alelyvers',
     `Fecha: ${fecha}`,
     sep,
   ];
@@ -295,7 +295,7 @@ function renderPreview() {
 
   const card = el('div', { className: 'quote-card' },
     el('div', { className: 'quote-card__header' },
-      el('div', { className: 'quote-card__business' }, 'Yeso Artesanal'),
+      el('div', { className: 'quote-card__business' }, 'Alelyvers'),
       el('div', { className: 'quote-card__subtitle' }, 'Cotizacion'),
       el('div', { className: 'quote-card__date' }, fecha),
     ),
@@ -429,7 +429,10 @@ function refreshUI() {
   clear(contentEl);
 
   contentEl.appendChild(renderHistoryPicker());
-  contentEl.appendChild(renderCurrentCalcSection());
+
+  const calcSection = renderCurrentCalcSection();
+  if (calcSection) contentEl.appendChild(calcSection);
+
   contentEl.appendChild(renderItemsTable());
 
   const preview = renderPreview();
@@ -450,8 +453,27 @@ export function mountQuote() {
 
   clear(container);
 
-  const preload = store.getState().quotePreload;
+  // Leer preload desde sessionStorage (más robusto que store.quotePreload)
+  let preload = null;
+  try {
+    const raw = sessionStorage.getItem('cc_quotePreload');
+    if (raw) {
+      preload = JSON.parse(raw);
+      sessionStorage.removeItem('cc_quotePreload');
+      console.log('[quote] mountQuote leyó preload de sessionStorage:', preload);
+    }
+  } catch {
+    preload = null;
+  }
+
+  // Fallback al store por si acaso
+  if (!preload) {
+    preload = store.getState().quotePreload;
+    if (preload) console.log('[quote] mountQuote leyó preload del store:', preload);
+  }
+
   quoteItems = Array.isArray(preload) ? preload.map((item) => ({ ...item, subtotal: item.subtotal ?? item.precioUnitario * item.cantidad })) : [];
+  console.log('[quote] mountQuote quoteItems inicial:', quoteItems);
 
   if (preload) {
     store.setState({ quotePreload: null });
@@ -498,7 +520,29 @@ export function mountQuote() {
 
   refreshUI();
 
-  const unsubscribe = store.subscribe(() => {
+  const unsubscribe = store.subscribe((state) => {
+    if (state.quotePreload && Array.isArray(state.quotePreload)) {
+      console.log('[quote] subscribe detectó quotePreload:', state.quotePreload);
+      const nuevos = state.quotePreload.map((item) => ({
+        ...item,
+        subtotal: item.subtotal ?? item.precioUnitario * item.cantidad,
+      }));
+
+      nuevos.forEach((nuevo) => {
+        const idx = quoteItems.findIndex((qi) => String(qi.id) === String(nuevo.id));
+        if (idx >= 0) {
+          quoteItems[idx] = nuevo;
+        } else {
+          quoteItems.push(nuevo);
+        }
+      });
+
+      store.setState({ quotePreload: null });
+      try { sessionStorage.removeItem('cc_quotePreload'); } catch {}
+      refreshUI();
+      return;
+    }
+
     refreshUI();
   });
 

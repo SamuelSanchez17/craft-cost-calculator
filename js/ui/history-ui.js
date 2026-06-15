@@ -246,17 +246,19 @@ function renderHistoryItem(entry, index) {
 
   on(quoteBtn, 'click', (e) => {
     e.stopPropagation();
-    store.setState({
-      quotePreload: [{
-        id: entry.id || Date.now(),
-        nombre,
-        cantidad: 1,
-        precioUnitario: precio,
-        subtotal: precio,
-        fecha: entry.fecha || new Date().toISOString(),
-      }],
-    });
-
+    const preload = [{
+      id: entry.id || Date.now(),
+      nombre,
+      cantidad: 1,
+      precioUnitario: precio,
+      subtotal: precio,
+      fecha: entry.fecha || new Date().toISOString(),
+    }];
+    try {
+      sessionStorage.setItem('cc_quotePreload', JSON.stringify(preload));
+    } catch {}
+    store.setState({ quotePreload: preload });
+    console.log('[history] Cotización - navegando a quote con preload:', preload);
     navigateTo('quote');
   });
 
