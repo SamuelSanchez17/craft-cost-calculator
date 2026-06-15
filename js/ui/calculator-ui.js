@@ -119,6 +119,7 @@ function renderPieceSelector() {
       dropdown.classList.remove('piece-selector__dropdown--open');
       renderPieceDetails();
       updateEffortMarks();
+      updateTogglesCount();
     }
   });
 
@@ -242,9 +243,9 @@ function renderToggles() {
   }
 
   return el('div', null,
-    makeToggle('Color / pintura', 'Costo base de pintura por tamaño', 0, 'color'),
-    makeToggle('Detalle fino', 'Acabado detallado extra', 0, 'detalle'),
-    makeToggle('Sellador', 'Protección y acabado brillante', 0, 'sellador'),
+    makeToggle('Color / pintura', 'Costo base de pintura por tamaño', COSTOS_COLOR.chica || 0, 'color'),
+    makeToggle('Detalle fino', 'Acabado detallado extra', COSTOS_DETALLE_FINO.chica || 0, 'detalle'),
+    makeToggle('Sellador', 'Protección y acabado brillante', COSTOS_SELLADOR.chica || 0, 'sellador'),
   );
 }
 
@@ -298,9 +299,12 @@ function renderEffortRange() {
     el('span', null, '$10'),
   );
 
-  return el('div', null,
-    el('div', { className: 'effort-range' }, slider, valueEl),
-    marks,
+  return el('div', { className: 'effort-range' },
+    el('div', { className: 'effort-range__track-area' },
+      slider,
+      marks
+    ),
+    valueEl
   );
 }
 

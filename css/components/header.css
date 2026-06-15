@@ -80,8 +80,8 @@
 /* ─── Toggle dark mode ─── */
 .theme-toggle {
   position: relative;
-  width: 40px;
-  height: 24px;
+  width: 52px;
+  height: 28px;
   flex-shrink: 0;
 }
 
@@ -102,14 +102,14 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  padding: 0 2px;
+  padding: 0 3px;
 }
 
 .theme-toggle__icon {
   position: absolute;
-  top: 3px;
-  width: 16px;
-  height: 16px;
+  top: 4px;
+  width: 18px;
+  height: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -119,17 +119,17 @@
 }
 
 .theme-toggle__icon svg {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
 }
 
 .theme-toggle__icon--sun {
-  left: 3px;
+  left: 4px;
   opacity: 1;
 }
 
 .theme-toggle__icon--moon {
-  right: 3px;
+  right: 4px;
   opacity: 0.3;
 }
 
